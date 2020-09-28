@@ -5,10 +5,11 @@ import 'model/APIProvider.dart';
 import 'model/APISource.dart';
 
 
-class CustomSearchDelegate extends SearchDelegate {
+class CustomSearchDelegateKategori extends SearchDelegate {
   final Future<List<Data>> datas;
+  final String kategori;
 
-  CustomSearchDelegate(this.datas);
+  CustomSearchDelegateKategori(this.datas,this.kategori);
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -38,7 +39,6 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    var hasilsearch=[];
     return ChangeNotifierProvider<APIProvider>(
       builder: (context) => APIProvider(),
       child: Consumer<APIProvider>(
@@ -55,6 +55,7 @@ class CustomSearchDelegate extends SearchDelegate {
                 future: datas,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    var hasilsearch=[];
 
                     var hasilsearchsubket1 = snapshot.data
                         .where((a) => (a.subket1==null?'':a.subket1).toLowerCase().contains(query));
@@ -78,9 +79,15 @@ class CustomSearchDelegate extends SearchDelegate {
                     hasilsearch.addAll(hasilsearchsubket5);
                     hasilsearch.addAll(hasilsearchsubket6);
                     hasilsearch.addAll(hasilsearchnamadata);
-                    if(hasilsearch.length>apiprovider.limit){
+
+                    hasilsearch = hasilsearch.where((a)=>a.idkategori==kategori).toList();
+
+                     if(hasilsearch.length>apiprovider.limit){
                       hasilsearch=hasilsearch.getRange(0, apiprovider.limit).toList();
                     }
+
+
+                    
                     
                     return Column(
                       children: hasilsearch

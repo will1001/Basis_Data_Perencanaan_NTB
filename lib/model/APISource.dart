@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 Future<List<Data>> fetchData() async {
   var responseJson;
-  String url = "http://10.0.2.2/job/Web_Data_Perencanaan_NTB/api/data";
+  String url = "https://web-bappeda.herokuapp.com/api/data";
   final response = await http.get(url,headers: {
     'WDP-NTB-KEY': 'alsodhr74jrhfot97264jgnd85jg7jsofjgur5',
   });

@@ -1,11 +1,13 @@
 import 'package:data_perencanaan_ntb/DataRealisasiPembangunanProvinsiNTB.dart';
 import 'package:data_perencanaan_ntb/DataRencanaPembangunanProvinsiNTB.dart';
+import 'package:data_perencanaan_ntb/Kontak.dart';
 import 'package:data_perencanaan_ntb/model/APISource.dart';
 import 'package:flutter/material.dart';
 
 import 'DataPokok.dart';
 import 'DataUrusanPilihan.dart';
 import 'DataUrusanWajib.dart';
+import 'SearchList.dart';
 
 
 
@@ -79,7 +81,7 @@ class _HomeState extends State<Home> {
                   size: 65.0,
                   color: Colors.blue,
                 ),
-                title: Text('Data Pokok'),
+                title: Text('Data Umum'),
                 onTap: () {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (c) => DataPokok(cachedata:widget.cachedata,listtahun: lsttahun,listsumberdata: lstsumberdata,)));
@@ -175,6 +177,53 @@ class _HomeState extends State<Home> {
                 onTap: () {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (c) => DataRencanaPembangunanProvinsiNTB(cachedata:widget.cachedata,listtahun: lsttahun,listsumberdata: lstsumberdata,)));
+                },
+              ),
+            ),
+          ),
+         Container(
+            decoration: BoxDecoration(
+                border: Border(
+              left: BorderSide(color: Colors.blue, width: 1.0),
+              right: BorderSide(color: Colors.blue, width: 1.0),
+              bottom: BorderSide(color: Colors.blue, width: 1.0),
+            )),
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: ListTile(
+                leading: Icon(
+                  Icons.search,
+                  size: 65.0,
+                  color: Colors.blue,
+                ),
+                title: Text('Search Data'),
+                onTap: () {
+                  showSearch(
+                    context: context,
+                    delegate: CustomSearchDelegate(widget.cachedata));
+                },
+              ),
+            ),
+          ),
+         Container(
+            decoration: BoxDecoration(
+                border: Border(
+              left: BorderSide(color: Colors.blue, width: 1.0),
+              right: BorderSide(color: Colors.blue, width: 1.0),
+              bottom: BorderSide(color: Colors.blue, width: 1.0),
+            )),
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: ListTile(
+                leading: Icon(
+                  Icons.contacts,
+                  size: 65.0,
+                  color: Colors.blue,
+                ),
+                title: Text('Kontak'),
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (c) => Kontak()));
                 },
               ),
             ),

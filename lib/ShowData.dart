@@ -53,7 +53,7 @@ Widget showdata(String kategori, Future<List<Data>> cachedata, int semester,
                       data = snapshot.data
                           .where((a) => a.idkategori == kategori)
                           .toList();
-                          data = data
+                      data = data
                           .where((a) => a.tahun.substring(0, 4) == tahun)
                           .toList();
                       data = data
@@ -179,12 +179,21 @@ class InfosList extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: SizedBox(
-                  height: 500.0,
+                  height: MediaQuery.of(context).size.height,
                   child: ListView.separated(
                     separatorBuilder: (BuildContext context, int index) =>
                         Divider(),
-                    itemCount: datas.length,
+                    itemCount: (datas.length == 0 ? 1 : datas.length),
                     itemBuilder: (BuildContext context, int i) {
+                      if (datas.length == 0) {
+                        return Column(
+                          children: <Widget>[
+                            Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text('Belum Ada Data',style: TextStyle(fontSize: 21),))
+                          ],
+                        );
+                      }
                       apiprovider.expansiontilecolor == Colors.white
                           ? apiprovider.expansiontilecolor = Colors.grey[300]
                           : apiprovider.expansiontilecolor = Colors.white;
@@ -288,6 +297,15 @@ class InfosList extends StatelessWidget {
                                       : ListTile(
                                           leading: Text('Sumber Data :'),
                                           title: Text(datas[i].sumberdata),
+                                        ),
+                                  datas[i].semester == null
+                                      ? ListTile(
+                                          leading: Text('Semester :'),
+                                          title: Text(''),
+                                        )
+                                      : ListTile(
+                                          leading: Text('Semester :'),
+                                          title: Text(datas[i].semester),
                                         ),
                                 ],
                               ),

@@ -13,8 +13,14 @@ Future<List<Data>> demo(String url) async {
     'WDP-NTB-KEY': 'alsodhr74jrhfot97264jgnd85jg7jsofjgur5',
   });
   responseJson = json.decode(file.readAsStringSync());
-  responseJson =
+  if(responseJson['status']==false){
+   responseJson =
+      null;
+  }else{
+    responseJson =
       (responseJson['data'] as List).map((p) => Data.fromJson(p)).toList();
+  };
+  await store.clearAll();
   return responseJson;
 }
 
@@ -31,16 +37,15 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     setState(() {
-      _cachedata =
-          demo('http://ngerti.net/api/data/');
+      _cachedata = demo('https://web-bappeda.herokuapp.com/api/label');
     });
-    Future.delayed(
-      Duration(seconds: 5),
-      () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (c) => Home(title: widget.title,cachedata: _cachedata,)));
-      },
-    );
+    // Future.delayed(
+    //   Duration(seconds: 5),
+    //   () {
+    //     Navigator.of(context)
+    //         .push(MaterialPageRoute(builder: (c) => Home(title: widget.title,cachedata: _cachedata,)));
+    //   },
+    // );
   }
 
   @override
@@ -92,11 +97,57 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               Column(
-                    children: <Widget>[
-                      LinearProgressIndicator(),
-                     
-                    ],
+                children: <Widget>[
+                  FlatButton.icon(
+                    color: Colors.blue[200],
+                    icon: Icon(Icons.touch_app),
+                    label: Text('Start'),
+                    onPressed: () {
+                      // print(_cachedata);
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (c) => Home(
+                                title: widget.title,
+                                cachedata: _cachedata,
+                              )));
+                    },
+                  ),
+                  FlatButton.icon(
+                    color: Colors.blue[200],
+                    icon: Icon(Icons.update),
+                    label: Text('Update Data'),
+                    onPressed: () {
+                      setState(() {
+                        _cachedata = demo('http://ngerti.net/api/data/');
+                      });
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: SizedBox(
+                                height: 50,
+                                child: FutureBuilder<List<Data>>(
+                                    future: _cachedata,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        Navigator.of(context).pop(true);
+                                      }
+                                      return Column(
+                                        children: <Widget>[
+                                          LinearProgressIndicator(),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text('Updating Data'),
+                                          )
+                                        ],
+                                      );
+                                    }),
+                              ),
+                            );
+                          });
+                    },
                   )
+                ],
+              )
               //       children: <Widget>[
               //         LinearProgressIndicator(),
               //         Padding(
