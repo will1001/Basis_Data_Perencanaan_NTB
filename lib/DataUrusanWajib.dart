@@ -338,222 +338,133 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
               children: <Widget>[
                 Container(
                   child: Center(
-                    child: showdata(
-                        "10",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                    child: showdata("10", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "11",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "11", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "12",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "12", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "13",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "13", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "14",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "14", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "15",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "15", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "16",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "16", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "17",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "17", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "18",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "18", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "19",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "19", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "20",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "20", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "21",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "21", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "22",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "22", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "23",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "23", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "24",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "24", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "25",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "25", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "26",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "26", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "27",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "27", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "28",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "28", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "29",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "29", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "30",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "30", null),
                   ),
                 ),
                 Container(
                   child: Center(
                     child: showdata(
-                        "31",
-                        widget.cachedata,
-                        apiprovider.semester,
-                        apiprovider.tahun,
-                        apiprovider.sumberdata),
+                        "31", null),
                   ),
                 ),
               ],

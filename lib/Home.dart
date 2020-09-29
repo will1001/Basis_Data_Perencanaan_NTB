@@ -1,7 +1,6 @@
 import 'package:data_perencanaan_ntb/DataRealisasiPembangunanProvinsiNTB.dart';
 import 'package:data_perencanaan_ntb/DataRencanaPembangunanProvinsiNTB.dart';
 import 'package:data_perencanaan_ntb/Kontak.dart';
-import 'package:data_perencanaan_ntb/model/APISource.dart';
 import 'package:flutter/material.dart';
 
 import 'DataPokok.dart';
@@ -14,9 +13,8 @@ import 'SearchList.dart';
 
 
 class Home extends StatefulWidget {
-  Home({this.title,this.cachedata});
+  Home({this.title});
   final String title;
-  final Future<List<Data>> cachedata;
   @override
   _HomeState createState() => _HomeState();
 }
@@ -43,27 +41,27 @@ class _HomeState extends State<Home> {
       body: Center(
           child: ListView(
         children: <Widget>[
-         FutureBuilder<List<Data>>(
-            future:
-               widget.cachedata,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                lsttahun = snapshot.data
-                    .map((d) => d.tahun.toString().substring(0, 4))
-                    .toSet()
-                    .toList();
-                lsttahun.add(DateTime.now().toString().substring(0, 4));
-                lsttahun = lsttahun.toSet().toList();
-                lstsumberdata = snapshot.data
-                    .map((d) => d.sumberdata.toString())
-                    .toSet()
-                    .toList();
+        //  FutureBuilder<List<Data>>(
+        //     future:
+        //        ,
+        //     builder: (context, snapshot) {
+        //       if (snapshot.hasData) {
+        //         lsttahun = snapshot.data
+        //             .map((d) => d.tahun.toString().substring(0, 4))
+        //             .toSet()
+        //             .toList();
+        //         lsttahun.add(DateTime.now().toString().substring(0, 4));
+        //         lsttahun = lsttahun.toSet().toList();
+        //         lstsumberdata = snapshot.data
+        //             .map((d) => d.sumberdata.toString())
+        //             .toSet()
+        //             .toList();
 
 
-              }
-              return Container();
-            },
-          ),
+        //       }
+        //       return Container();
+        //     },
+        //   ),
           Container(
             margin: EdgeInsets.only(top: 8.0),
             decoration: BoxDecoration(
@@ -84,7 +82,7 @@ class _HomeState extends State<Home> {
                 title: Text('Data Umum'),
                 onTap: () {
                   Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (c) => DataPokok(cachedata:widget.cachedata,listtahun: lsttahun,listsumberdata: lstsumberdata,)));
+                      .push(MaterialPageRoute(builder: (c) => DataPokok()));
                 },
               ),
             ),
@@ -107,7 +105,7 @@ class _HomeState extends State<Home> {
                 title: Text('Data Urusan Pilihan'),
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (c) => DataUrusanPilihan(cachedata:widget.cachedata,listtahun: lsttahun,listsumberdata: lstsumberdata,)));
+                      MaterialPageRoute(builder: (c) => DataUrusanPilihan()));
                 },
               ),
             ),
@@ -130,7 +128,7 @@ class _HomeState extends State<Home> {
                 title: Text('Data Urusan Wajib'),
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (c) => DataUrusanWajib(cachedata:widget.cachedata,listtahun: lsttahun,listsumberdata: lstsumberdata,)));
+                      MaterialPageRoute(builder: (c) => DataUrusanWajib()));
                 },
               ),
             ),
@@ -153,7 +151,7 @@ class _HomeState extends State<Home> {
                 title: Text('Data Realisasi Pembangunan Provinsi NTB'),
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (c) => DataRealisasiPembangunanProvinsiNTB(cachedata:widget.cachedata,listtahun: lsttahun,listsumberdata: lstsumberdata,)));
+                      MaterialPageRoute(builder: (c) => DataRealisasiPembangunanProvinsiNTB()));
                 },
               ),
             ),
@@ -176,7 +174,7 @@ class _HomeState extends State<Home> {
                 title: Text('Data Rencana Pembangunan Provinsi NTB'),
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (c) => DataRencanaPembangunanProvinsiNTB(cachedata:widget.cachedata,listtahun: lsttahun,listsumberdata: lstsumberdata,)));
+                      MaterialPageRoute(builder: (c) => DataRencanaPembangunanProvinsiNTB()));
                 },
               ),
             ),
@@ -200,7 +198,7 @@ class _HomeState extends State<Home> {
                 onTap: () {
                   showSearch(
                     context: context,
-                    delegate: CustomSearchDelegate(widget.cachedata));
+                    delegate: CustomSearchDelegate());
                 },
               ),
             ),

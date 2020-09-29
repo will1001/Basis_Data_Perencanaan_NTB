@@ -36,9 +36,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _cachedata = demo('https://web-bappeda.herokuapp.com/api/label');
-    });
+    // setState(() {
+    //   _cachedata = "demo('https://web-bappeda.herokuapp.com/api/label')";
+    // });
     // Future.delayed(
     //   Duration(seconds: 5),
     //   () {
@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (c) => Home(
                                 title: widget.title,
-                                cachedata: _cachedata,
+                                // cachedata: _cachedata,
                               )));
                     },
                   ),

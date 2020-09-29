@@ -310,50 +310,42 @@ class _DataUrusanPilihanState extends State<DataUrusanPilihan>
               children: <Widget>[
                 Container(
                   child: Center(
-                    child: showdata("2", widget.cachedata, apiprovider.semester,
-                        apiprovider.tahun, apiprovider.sumberdata),
+                    child: showdata("2", null),
                   ),
                 ),
                 Container(
                   child: Center(
-                    child: showdata("3", widget.cachedata, apiprovider.semester,
-                        apiprovider.tahun, apiprovider.sumberdata),
+                    child: showdata("3", null),
                   ),
                 ),
                 Container(
                   child: Center(
-                    child: showdata("4", widget.cachedata, apiprovider.semester,
-                        apiprovider.tahun, apiprovider.sumberdata),
+                    child: showdata("4", null),
                   ),
                 ),
                 Container(
                   child: Center(
-                    child: showdata("5", widget.cachedata, apiprovider.semester,
-                        apiprovider.tahun, apiprovider.sumberdata),
+                    child: showdata("5", null),
                   ),
                 ),
                 Container(
                   child: Center(
-                    child: showdata("6", widget.cachedata, apiprovider.semester,
-                        apiprovider.tahun, apiprovider.sumberdata),
+                    child: showdata("6", null),
                   ),
                 ),
                 Container(
                   child: Center(
-                    child: showdata("7", widget.cachedata, apiprovider.semester,
-                        apiprovider.tahun, apiprovider.sumberdata),
+                    child: showdata("7", null),
                   ),
                 ),
                 Container(
                   child: Center(
-                    child: showdata("8", widget.cachedata, apiprovider.semester,
-                        apiprovider.tahun, apiprovider.sumberdata),
+                    child: showdata("8", null),
                   ),
                 ),
                 Container(
                   child: Center(
-                    child: showdata("9", widget.cachedata, apiprovider.semester,
-                        apiprovider.tahun, apiprovider.sumberdata),
+                    child: showdata("9", null),
                   ),
                 ),
               ],

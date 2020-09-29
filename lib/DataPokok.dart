@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:data_perencanaan_ntb/SearchListkategori.dart';
 import 'package:data_perencanaan_ntb/ShowData.dart';
 import 'package:data_perencanaan_ntb/model/APIProvider.dart';
 import 'package:data_perencanaan_ntb/model/APISource.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:http/http.dart' as http;
 
 class DataPokok extends StatefulWidget {
   DataPokok({this.title, this.cachedata, this.listtahun, this.listsumberdata});
@@ -20,6 +22,30 @@ class _DataPokokState extends State<DataPokok> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var lstsumberdata;
   var lsttahun;
+  bool _isLoading = true;
+  int abc = 0;
+  var dataCache;
+  List _listData = new List();
+  ScrollController _scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(_listData);
+    fetch(abc.toString());
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          abc += 10;
+          _isLoading = true;
+        });
+        fetch(abc.toString());
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<APIProvider>(
@@ -74,9 +100,7 @@ class _DataPokokState extends State<DataPokok> {
                           onChanged: (String newValue) {
                             apiprovider.tahun = newValue.toString();
                           },
-                          items: (lsttahun == null
-                                  ? ['']
-                                  : lsttahun)
+                          items: (lsttahun == null ? [''] : lsttahun)
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -176,7 +200,7 @@ class _DataPokokState extends State<DataPokok> {
                         },
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left:11.0),
+                        padding: const EdgeInsets.only(left: 11.0),
                         child: FlatButton.icon(
                           color: Colors.blue,
                           icon: Icon(
@@ -201,17 +225,28 @@ class _DataPokokState extends State<DataPokok> {
             ),
           ),
           appBar: AppBar(
-           actions: <Widget>[
-             Opacity(opacity: 0,)
-           ],
+            actions: <Widget>[
+              Opacity(
+                opacity: 0,
+              )
+            ],
             centerTitle: true,
             title: Text(
               'Data Umum',
               style: TextStyle(fontSize: 16.0),
             ),
           ),
-          body: showdata("1", widget.cachedata, apiprovider.semester,
-              apiprovider.tahun, apiprovider.sumberdata),
+          body: ListView.builder(
+              controller: _scrollController,
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      showdata("2", _listData),
+                      _isLoading?Center(child: CircularProgressIndicator()):Container()
+                    ],
+                  );
+              }),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -236,12 +271,26 @@ class _DataPokokState extends State<DataPokok> {
               } else if (value == 2) {
                 showSearch(
                     context: context,
-                    delegate: CustomSearchDelegateKategori(widget.cachedata,'1'));
+                    delegate:
+                        CustomSearchDelegateKategori(widget.cachedata, '1'));
               }
             },
           ),
         ),
       ),
     );
+  }
+
+  fetch(String limit) async {
+    final response = await http
+        .get("https://web-bappeda.herokuapp.com/api/Datas?limit=" + limit);
+    if (response.statusCode == 200) {
+      setState(() {
+        _listData.addAll(json.decode(response.body));
+        _isLoading = false;
+      });
+    } else {
+      throw Exception('failed load data');
+    }
   }
 }

@@ -211,7 +211,7 @@ class _DataRencanaPembangunanProvinsiNTBState extends State<DataRencanaPembangun
               style: TextStyle(fontSize: 16.0),
             ),
           ),
-          body: showdata("33", widget.cachedata,apiprovider.semester,apiprovider.tahun,apiprovider.sumberdata),
+          body: showdata("33", null),
           bottomNavigationBar:BottomNavigationBar(
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(

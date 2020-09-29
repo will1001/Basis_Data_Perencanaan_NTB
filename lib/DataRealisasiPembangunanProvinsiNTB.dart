@@ -213,8 +213,7 @@ class _DataRealisasiPembangunanProvinsiNTBState
               style: TextStyle(fontSize: 16.0),
             ),
           ),
-          body: showdata("32", widget.cachedata, apiprovider.semester,
-              apiprovider.tahun, apiprovider.sumberdata),
+          body: showdata("32", null),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
