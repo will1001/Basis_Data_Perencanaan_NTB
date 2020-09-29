@@ -4,7 +4,8 @@ import 'package:data_perencanaan_ntb/model/APIProvider.dart';
 import 'package:data_perencanaan_ntb/model/APISource.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 
 class DataRencanaPembangunanProvinsiNTB extends StatefulWidget {
@@ -21,6 +22,28 @@ class _DataRencanaPembangunanProvinsiNTBState extends State<DataRencanaPembangun
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var lstsumberdata;
   var lsttahun;
+  bool _isLoading = true;
+  int _pageData = 0;
+  var dataCache;
+  List _listData = new List();
+  ScrollController _scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetch("1",_pageData.toString());
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _pageData += 10;
+          _isLoading = true;
+        });
+        fetch("1",_pageData.toString());
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<APIProvider>(
@@ -211,7 +234,17 @@ class _DataRencanaPembangunanProvinsiNTBState extends State<DataRencanaPembangun
               style: TextStyle(fontSize: 16.0),
             ),
           ),
-          body: showdata("33", null),
+          body: ListView.builder(
+              controller: _scrollController,
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      showdata("1", _listData),
+                      _isLoading?Center(child: CircularProgressIndicator()):Container()
+                    ],
+                  );
+              }),
           bottomNavigationBar:BottomNavigationBar(
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
@@ -243,5 +276,17 @@ class _DataRencanaPembangunanProvinsiNTBState extends State<DataRencanaPembangun
         ),
       ),
     );
+  }
+  fetch(String id_kategori , String limit) async {
+    final response = await http
+        .get("https://web-bappeda.herokuapp.com/api/Datas?limit=" + limit +"&id_kategori=" + id_kategori);
+    if (response.statusCode == 200) {
+      setState(() {
+        _listData.addAll(json.decode(response.body));
+        _isLoading = false;
+      });
+    } else {
+      throw Exception('failed load data');
+    }
   }
 }

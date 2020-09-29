@@ -23,7 +23,7 @@ class _DataPokokState extends State<DataPokok> {
   var lstsumberdata;
   var lsttahun;
   bool _isLoading = true;
-  int abc = 0;
+  int _pageData = 0;
   var dataCache;
   List _listData = new List();
   ScrollController _scrollController = new ScrollController();
@@ -32,16 +32,15 @@ class _DataPokokState extends State<DataPokok> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(_listData);
-    fetch(abc.toString());
+    fetch("1",_pageData.toString());
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         setState(() {
-          abc += 10;
+          _pageData += 10;
           _isLoading = true;
         });
-        fetch(abc.toString());
+        fetch("1",_pageData.toString());
       }
     });
   }
@@ -242,7 +241,7 @@ class _DataPokokState extends State<DataPokok> {
               itemBuilder: (BuildContext context, int index) {
                   return Column(
                     children: [
-                      showdata("2", _listData),
+                      showdata("1", _listData),
                       _isLoading?Center(child: CircularProgressIndicator()):Container()
                     ],
                   );
@@ -281,9 +280,9 @@ class _DataPokokState extends State<DataPokok> {
     );
   }
 
-  fetch(String limit) async {
+  fetch(String id_kategori , String limit) async {
     final response = await http
-        .get("https://web-bappeda.herokuapp.com/api/Datas?limit=" + limit);
+        .get("https://web-bappeda.herokuapp.com/api/Datas?limit=" + limit +"&id_kategori=" + id_kategori);
     if (response.statusCode == 200) {
       setState(() {
         _listData.addAll(json.decode(response.body));

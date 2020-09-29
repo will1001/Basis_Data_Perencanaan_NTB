@@ -3,7 +3,8 @@ import 'package:data_perencanaan_ntb/model/APIProvider.dart';
 import 'package:data_perencanaan_ntb/model/APISource.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'ShowData.dart';
 
 class DataUrusanWajib extends StatefulWidget {
@@ -23,38 +24,45 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var lstsumberdata;
   var lsttahun;
-  TabController _tabController;
-  final List<Tab> myTabs = <Tab>[
-    Tab(child: Text('1. Pendidikan')),
-    Tab(child: Text('2. Kesehatan')),
-    Tab(child: Text('3. Pekerjaan Umum dan Penataan Ruang')),
-    Tab(child: Text('4. Perumahan dan Kawasan Permukiman')),
-    Tab(child: Text('5. Keamanan dan Ketertiban Umum')),
-    Tab(child: Text('6. Sosial')),
-    Tab(child: Text('7. Tenaga Kerja')),
-    Tab(child: Text('8. Pemberdayaan Perempuan dan Perlindungan Anak')),
-    Tab(child: Text('9. Pangan')),
-    Tab(child: Text('10. Pertanahan')),
-    Tab(child: Text('11. Lingkungan Hidup')),
-    Tab(child: Text('12. Administrasi Kependudukan dan Pencatatan Sipil')),
-    Tab(child: Text('13. Pemberdayaan Masyarakat Desa')),
-    Tab(child: Text('14. Pengendalian Penduduk dan Keluarga Berencana')),
-    Tab(child: Text('15. Perhubungan')),
-    Tab(child: Text('16. Komunikasi dan Informatika')),
-    Tab(child: Text('17. Koperasi Usaha Kecil dan Menengah')),
-    Tab(child: Text('18. Penanaman Modal')),
-    Tab(child: Text('19. Kepemudaan dan Olahraga')),
-    Tab(child: Text('20. Kebudayaan')),
-    Tab(child: Text('21. Perpustakaan')),
-    Tab(child: Text('22. Kearsipan')),
-  ];
+  bool _isLoading = true;
+  bool _apicall = true;
+  int _pageData = 0;
+  int _kategori = 2;
+  var dataCache;
+  List _listData = new List();
+  ScrollController _scrollController = new ScrollController();
+  // TabController _tabController;
+  // final List<Tab> myTabs = <Tab>[
+  //   Tab(child: Text('1. Pendidikan')),
+  //   Tab(child: Text('2. Kesehatan')),
+  //   Tab(child: Text('3. Pekerjaan Umum dan Penataan Ruang')),
+  //   Tab(child: Text('4. Perumahan dan Kawasan Permukiman')),
+  //   Tab(child: Text('5. Keamanan dan Ketertiban Umum')),
+  //   Tab(child: Text('6. Sosial')),
+  //   Tab(child: Text('7. Tenaga Kerja')),
+  //   Tab(child: Text('8. Pemberdayaan Perempuan dan Perlindungan Anak')),
+  //   Tab(child: Text('9. Pangan')),
+  //   Tab(child: Text('10. Pertanahan')),
+  //   Tab(child: Text('11. Lingkungan Hidup')),
+  //   Tab(child: Text('12. Administrasi Kependudukan dan Pencatatan Sipil')),
+  //   Tab(child: Text('13. Pemberdayaan Masyarakat Desa')),
+  //   Tab(child: Text('14. Pengendalian Penduduk dan Keluarga Berencana')),
+  //   Tab(child: Text('15. Perhubungan')),
+  //   Tab(child: Text('16. Komunikasi dan Informatika')),
+  //   Tab(child: Text('17. Koperasi Usaha Kecil dan Menengah')),
+  //   Tab(child: Text('18. Penanaman Modal')),
+  //   Tab(child: Text('19. Kepemudaan dan Olahraga')),
+  //   Tab(child: Text('20. Kebudayaan')),
+  //   Tab(child: Text('21. Perpustakaan')),
+  //   Tab(child: Text('22. Kearsipan')),
+  // ];
 
   var listmenu;
 
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: myTabs.length);
+    // _tabController = new TabController(vsync: this, length: myTabs.length);
     listmenu = [
       {'index': 0, 'data': 'Pendidikan'},
       {'index': 1, 'data': 'Kesehatan'},
@@ -79,11 +87,26 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
       {'index': 20, 'data': 'Perpustakaan'},
       {'index': 21, 'data': 'Kearsipan'},
     ];
+    if (_apicall) {
+      fetch(_kategori.toString(), _pageData.toString());
+      _apicall = false;
+      print("object");
+    }
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _pageData += 10;
+          _isLoading = true;
+        });
+        fetch(_kategori.toString(), _pageData.toString());
+      }
+    });
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    // _tabController.dispose();
     super.dispose();
   }
 
@@ -120,9 +143,14 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                                 title: Text(f['data']),
                                 trailing: Icon(Icons.keyboard_arrow_right),
                                 onTap: () {
-                                  _tabController.index = f['index'];
-                                  _tabController
-                                      .animateTo(_tabController.index);
+                                  setState(() {
+                                    _listData.clear();
+                                    _kategori = f['index'] + 2;
+                                    _apicall = true;
+                                    _isLoading = true;
+                                  });
+
+                                  fetch(_kategori.toString(), 0.toString());
                                   Navigator.of(context).pop();
                                 },
                               ),
@@ -139,177 +167,177 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                 ],
               ),
             ),
-            endDrawer: Drawer(
-              child: ListView(
-                children: <Widget>[
-                  Container(
-                    height: 100.0,
-                    child: DrawerHeader(
-                      child: Center(
-                          child: Text('Filter Data',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 23.0))),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                  FutureBuilder<List<Data>>(
-                    future: widget.cachedata,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        lsttahun = snapshot.data
-                            .map((d) => d.tahun.toString().substring(0, 4))
-                            .toSet()
-                            .toList();
-                        lsttahun = lsttahun.toSet().toList();
-                        lsttahun.remove('null');
-                        lsttahun.sort();
-                      }
-                      return Row(
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 55.0),
-                            child: Text('Tahun :'),
-                          ),
-                          DropdownButton<String>(
-                            value: apiprovider.tahun,
-                            icon: Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            style: TextStyle(color: Colors.black),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.black,
-                            ),
-                            onChanged: (String newValue) {
-                              apiprovider.tahun = newValue.toString();
-                            },
-                            items: (lsttahun == null ? [''] : lsttahun)
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 15.0),
-                    child: Text('Sumber Data :'),
-                  ),
-                  FutureBuilder<List<Data>>(
-                    future: widget.cachedata,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        lstsumberdata = snapshot.data
-                            .map((d) => d.sumberdata.toString())
-                            .toSet()
-                            .toList();
+            // endDrawer: Drawer(
+            //   child: ListView(
+            //     children: <Widget>[
+            //       Container(
+            //         height: 100.0,
+            //         child: DrawerHeader(
+            //           child: Center(
+            //               child: Text('Filter Data',
+            //                   style: TextStyle(
+            //                       color: Colors.white, fontSize: 23.0))),
+            //           decoration: BoxDecoration(
+            //             color: Colors.blue,
+            //           ),
+            //         ),
+            //       ),
+            //       FutureBuilder<List<Data>>(
+            //         future: widget.cachedata,
+            //         builder: (context, snapshot) {
+            //           if (snapshot.hasData) {
+            //             lsttahun = snapshot.data
+            //                 .map((d) => d.tahun.toString().substring(0, 4))
+            //                 .toSet()
+            //                 .toList();
+            //             lsttahun = lsttahun.toSet().toList();
+            //             lsttahun.remove('null');
+            //             lsttahun.sort();
+            //           }
+            //           return Row(
+            //             children: <Widget>[
+            //               Padding(
+            //                 padding:
+            //                     const EdgeInsets.only(left: 16.0, right: 55.0),
+            //                 child: Text('Tahun :'),
+            //               ),
+            //               DropdownButton<String>(
+            //                 value: apiprovider.tahun,
+            //                 icon: Icon(Icons.arrow_downward),
+            //                 iconSize: 24,
+            //                 elevation: 16,
+            //                 style: TextStyle(color: Colors.black),
+            //                 underline: Container(
+            //                   height: 2,
+            //                   color: Colors.black,
+            //                 ),
+            //                 onChanged: (String newValue) {
+            //                   apiprovider.tahun = newValue.toString();
+            //                 },
+            //                 items: (lsttahun == null ? [''] : lsttahun)
+            //                     .map<DropdownMenuItem<String>>((String value) {
+            //                   return DropdownMenuItem<String>(
+            //                     value: value,
+            //                     child: Text(value),
+            //                   );
+            //                 }).toList(),
+            //               ),
+            //             ],
+            //           );
+            //         },
+            //       ),
+            //       Padding(
+            //         padding: const EdgeInsets.only(left: 16.0, right: 15.0),
+            //         child: Text('Sumber Data :'),
+            //       ),
+            //       FutureBuilder<List<Data>>(
+            //         future: widget.cachedata,
+            //         builder: (context, snapshot) {
+            //           if (snapshot.hasData) {
+            //             lstsumberdata = snapshot.data
+            //                 .map((d) => d.sumberdata.toString())
+            //                 .toSet()
+            //                 .toList();
 
-                        lstsumberdata.remove('null');
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16.0,
-                        ),
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: apiprovider.sumberdata,
-                          icon: Icon(Icons.arrow_downward),
-                          iconSize: 24,
-                          elevation: 16,
-                          style: TextStyle(color: Colors.black),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.black,
-                          ),
-                          onChanged: (String newValue) {
-                            apiprovider.sumberdata = newValue.toString();
-                          },
-                          items: (lstsumberdata == null ? [''] : lstsumberdata)
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      );
-                    },
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 32.0),
-                        child: Text('Semester :'),
-                      ),
-                      Text('1'),
-                      Radio(
-                        value: 1,
-                        groupValue: apiprovider.semester,
-                        onChanged: (int value) {
-                          apiprovider.semester = value;
-                        },
-                      ),
-                      Text('2'),
-                      Radio(
-                        value: 2,
-                        groupValue: apiprovider.semester,
-                        onChanged: (int value) {
-                          apiprovider.semester = value;
-                        },
-                      ),
-                    ],
-                  ),
-                  Padding(
-                  padding: const EdgeInsets.all(31.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      FlatButton.icon(
-                        color: Colors.blue,
-                        icon: Icon(
-                          Icons.filter_list,
-                          color: Colors.white,
-                        ), //`Icon` to display
-                        label: Text(
-                          'Terapkan',
-                          style: TextStyle(color: Colors.white),
-                        ), //`Text` to display
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left:11.0),
-                        child: FlatButton.icon(
-                          color: Colors.blue,
-                          icon: Icon(
-                            Icons.filter_list,
-                            color: Colors.white,
-                          ), //`Icon` to display
-                          label: Text(
-                            'Reset',
-                            style: TextStyle(color: Colors.white),
-                          ), //`Text` to display
-                          onPressed: () {
-                            apiprovider.tahun = null;
-                            apiprovider.sumberdata = null;
-                            apiprovider.semester = null;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ],
-              ),
-            ),
+            //             lstsumberdata.remove('null');
+            //           }
+            //           return Padding(
+            //             padding: const EdgeInsets.only(
+            //               left: 16.0,
+            //             ),
+            //             child: DropdownButton<String>(
+            //               isExpanded: true,
+            //               value: apiprovider.sumberdata,
+            //               icon: Icon(Icons.arrow_downward),
+            //               iconSize: 24,
+            //               elevation: 16,
+            //               style: TextStyle(color: Colors.black),
+            //               underline: Container(
+            //                 height: 2,
+            //                 color: Colors.black,
+            //               ),
+            //               onChanged: (String newValue) {
+            //                 apiprovider.sumberdata = newValue.toString();
+            //               },
+            //               items: (lstsumberdata == null ? [''] : lstsumberdata)
+            //                   .map<DropdownMenuItem<String>>((String value) {
+            //                 return DropdownMenuItem<String>(
+            //                   value: value,
+            //                   child: Text(value),
+            //                 );
+            //               }).toList(),
+            //             ),
+            //           );
+            //         },
+            //       ),
+            //       Row(
+            //         children: <Widget>[
+            //           Padding(
+            //             padding: const EdgeInsets.only(left: 16.0, right: 32.0),
+            //             child: Text('Semester :'),
+            //           ),
+            //           Text('1'),
+            //           Radio(
+            //             value: 1,
+            //             groupValue: apiprovider.semester,
+            //             onChanged: (int value) {
+            //               apiprovider.semester = value;
+            //             },
+            //           ),
+            //           Text('2'),
+            //           Radio(
+            //             value: 2,
+            //             groupValue: apiprovider.semester,
+            //             onChanged: (int value) {
+            //               apiprovider.semester = value;
+            //             },
+            //           ),
+            //         ],
+            //       ),
+            //       Padding(
+            //       padding: const EdgeInsets.all(31.0),
+            //       child: Row(
+            //         crossAxisAlignment: CrossAxisAlignment.center,
+            //         children: <Widget>[
+            //           FlatButton.icon(
+            //             color: Colors.blue,
+            //             icon: Icon(
+            //               Icons.filter_list,
+            //               color: Colors.white,
+            //             ), //`Icon` to display
+            //             label: Text(
+            //               'Terapkan',
+            //               style: TextStyle(color: Colors.white),
+            //             ), //`Text` to display
+            //             onPressed: () {
+            //               Navigator.pop(context);
+            //             },
+            //           ),
+            //           Padding(
+            //             padding: const EdgeInsets.only(left:11.0),
+            //             child: FlatButton.icon(
+            //               color: Colors.blue,
+            //               icon: Icon(
+            //                 Icons.filter_list,
+            //                 color: Colors.white,
+            //               ), //`Icon` to display
+            //               label: Text(
+            //                 'Reset',
+            //                 style: TextStyle(color: Colors.white),
+            //               ), //`Text` to display
+            //               onPressed: () {
+            //                 apiprovider.tahun = null;
+            //                 apiprovider.sumberdata = null;
+            //                 apiprovider.semester = null;
+            //               },
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //     ],
+            //   ),
+            // ),
             appBar: AppBar(
               actions: <Widget>[
                 Opacity(
@@ -324,151 +352,28 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                 'Data Urusan Wajib',
                 style: TextStyle(fontSize: 16.0),
               ),
-              bottom: PreferredSize(
-                  child: TabBar(
-                      isScrollable: true,
-                      unselectedLabelColor: Colors.white.withOpacity(1),
-                      indicatorColor: Colors.white,
-                      controller: _tabController,
-                      tabs: myTabs),
-                  preferredSize: Size.fromHeight(30.0)),
+              // bottom: PreferredSize(
+              //     child: TabBar(
+              //         isScrollable: true,
+              //         unselectedLabelColor: Colors.white.withOpacity(1),
+              //         indicatorColor: Colors.white,
+              //         controller: _tabController,
+              //         tabs: myTabs),
+              //     preferredSize: Size.fromHeight(30.0)),
             ),
-            body: TabBarView(
-              controller: _tabController,
-              children: <Widget>[
-                Container(
-                  child: Center(
-                    child: showdata("10", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "11", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "12", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "13", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "14", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "15", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "16", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "17", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "18", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "19", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "20", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "21", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "22", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "23", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "24", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "25", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "26", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "27", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "28", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "29", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "30", null),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: showdata(
-                        "31", null),
-                  ),
-                ),
-              ],
-            ),
+            body: ListView.builder(
+                controller: _scrollController,
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      showdata("1", _listData),
+                      _isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : Container()
+                    ],
+                  );
+                }),
             bottomNavigationBar: BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
@@ -492,11 +397,11 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                 } else if (value == 1) {
                   _scaffoldKey.currentState.openEndDrawer();
                 } else if (value == 2) {
-                  String kategori = (_tabController.index + 10).toString();
-                  showSearch(
-                      context: context,
-                      delegate: CustomSearchDelegateKategori(
-                          widget.cachedata, kategori));
+                //   String kategori = (_tabController.index + 10).toString();
+                //   showSearch(
+                //       context: context,
+                //       delegate: CustomSearchDelegateKategori(
+                //           widget.cachedata, kategori));
                 }
               },
             ),
@@ -504,5 +409,23 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
         ),
       ),
     );
+  }
+  fetch(String id_kategori, String limit) async {
+    print("apicall");
+    final response = await http.get(
+        "https://web-bappeda.herokuapp.com/api/Datas?limit=" +
+            limit +
+            "&id_kategori=" +
+            id_kategori);
+    if (response.statusCode == 200) {
+      print("apicall2");
+      setState(() {
+        _listData.addAll(json.decode(response.body));
+        _isLoading = false;
+        print(_listData);
+      });
+    } else {
+      throw Exception('failed load data');
+    }
   }
 }
