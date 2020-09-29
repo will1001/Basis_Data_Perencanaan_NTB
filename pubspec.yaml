@@ -48,6 +48,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/images/BackgroundSplashScreen.jpeg
+   - assets/images/bg_splashscreen.png
    - assets/images/LogoNTB.png
    - assets/images/loading.gif
    - assets/images/Bappeda-Logo-300x95.png

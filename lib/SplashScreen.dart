@@ -39,13 +39,13 @@ class _SplashScreenState extends State<SplashScreen> {
     // setState(() {
     //   _cachedata = "demo('https://web-bappeda.herokuapp.com/api/label')";
     // });
-    // Future.delayed(
-    //   Duration(seconds: 5),
-    //   () {
-    //     Navigator.of(context)
-    //         .push(MaterialPageRoute(builder: (c) => Home(title: widget.title,cachedata: _cachedata,)));
-    //   },
-    // );
+    Future.delayed(
+      Duration(seconds: 5),
+      () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (c) => Home(title: widget.title )));
+      },
+    );
   }
 
   @override
@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/BackgroundSplashScreen.jpeg'),
+            image: AssetImage('assets/images/bg_splashscreen.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -68,8 +68,8 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                width: 250.0,
-                height: 250.0,
+                width: 144.0,
+                height: 212.0,
                 child: FadeInImage(
                   fadeInDuration: const Duration(seconds: 1),
                   placeholder: AssetImage('assets/images/LogoNTB.png'),
@@ -77,12 +77,12 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(27.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Text(
                   'Basis Data Perencanaan NTB',
                   style: TextStyle(
                     fontSize: 21.0,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -92,62 +92,62 @@ class _SplashScreenState extends State<SplashScreen> {
                   'Dikelola oleh BAPPEDA NTB',
                   style: TextStyle(
                     fontSize: 13.0,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),
-              Column(
-                children: <Widget>[
-                  FlatButton.icon(
-                    color: Colors.blue[200],
-                    icon: Icon(Icons.touch_app),
-                    label: Text('Start'),
-                    onPressed: () {
-                      // print(_cachedata);
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (c) => Home(
-                                title: widget.title,
-                                // cachedata: _cachedata,
-                              )));
-                    },
-                  ),
-                  FlatButton.icon(
-                    color: Colors.blue[200],
-                    icon: Icon(Icons.update),
-                    label: Text('Update Data'),
-                    onPressed: () {
-                      setState(() {
-                        _cachedata = demo('http://ngerti.net/api/data/');
-                      });
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: SizedBox(
-                                height: 50,
-                                child: FutureBuilder<List<Data>>(
-                                    future: _cachedata,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        Navigator.of(context).pop(true);
-                                      }
-                                      return Column(
-                                        children: <Widget>[
-                                          LinearProgressIndicator(),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text('Updating Data'),
-                                          )
-                                        ],
-                                      );
-                                    }),
-                              ),
-                            );
-                          });
-                    },
-                  )
-                ],
-              )
+              // Column(
+              //   children: <Widget>[
+              //     FlatButton.icon(
+              //       color: Colors.blue[200],
+              //       icon: Icon(Icons.touch_app),
+              //       label: Text('Start'),
+              //       onPressed: () {
+              //         // print(_cachedata);
+              //         Navigator.of(context).push(MaterialPageRoute(
+              //             builder: (c) => Home(
+              //                   title: widget.title,
+              //                   // cachedata: _cachedata,
+              //                 )));
+              //       },
+              //     ),
+              //     FlatButton.icon(
+              //       color: Colors.blue[200],
+              //       icon: Icon(Icons.update),
+              //       label: Text('Update Data'),
+              //       onPressed: () {
+              //         setState(() {
+              //           _cachedata = demo('http://ngerti.net/api/data/');
+              //         });
+              //         showDialog(
+              //             context: context,
+              //             builder: (BuildContext context) {
+              //               return AlertDialog(
+              //                 content: SizedBox(
+              //                   height: 50,
+              //                   child: FutureBuilder<List<Data>>(
+              //                       future: _cachedata,
+              //                       builder: (context, snapshot) {
+              //                         if (snapshot.hasData) {
+              //                           Navigator.of(context).pop(true);
+              //                         }
+              //                         return Column(
+              //                           children: <Widget>[
+              //                             LinearProgressIndicator(),
+              //                             Padding(
+              //                               padding: const EdgeInsets.all(8.0),
+              //                               child: Text('Updating Data'),
+              //                             )
+              //                           ],
+              //                         );
+              //                       }),
+              //                 ),
+              //               );
+              //             });
+              //       },
+              //     )
+              //   ],
+              // )
               //       children: <Widget>[
               //         LinearProgressIndicator(),
               //         Padding(

@@ -67,7 +67,12 @@ Widget showdata(String kategori, List _listData) {
               DataCell(Text(e['satuan'])),
               DataCell(Text(semesterConverter(e['tahun'].substring(0, 4)))),
               DataCell(Text(e['tahun'].substring(0, 4))),
-              DataCell(Text(zeroReplacer(e['nama_sumber']))),
+              DataCell(Wrap(
+                direction: Axis.vertical,
+                children: [
+                  Container(width: 200,child: Text(zeroReplacer(e['nama_sumber']))),
+                ],
+              )),
               DataCell(Text(nullChecker(e['nama']))),
             ],
           );
