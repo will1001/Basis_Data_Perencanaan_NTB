@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:data_perencanaan_ntb/SearchListkategori.dart';
+import 'SearchData.dart';
 import 'package:data_perencanaan_ntb/ShowData.dart';
 import 'package:data_perencanaan_ntb/model/APIProvider.dart';
 import 'package:data_perencanaan_ntb/model/APISource.dart';
@@ -24,6 +24,7 @@ class _DataPokokState extends State<DataPokok> {
   String _tahun;
   int _semester;
   bool _isLoading = true;
+  bool _dataIsEmpty = false;
   int _pageData = 0;
   var dataCache;
   List _listData = new List();
@@ -234,9 +235,13 @@ class _DataPokokState extends State<DataPokok> {
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: [
-                    showdata("1", _listData),
+                    _dataIsEmpty
+                        ? Text("Data Kosong / Belum Di Inputkan")
+                        : showdata("1", _listData),
                     _isLoading
-                        ? Center(child: CircularProgressIndicator())
+                        ? _dataIsEmpty
+                            ? Container()
+                            : Center(child: CircularProgressIndicator())
                         : Container()
                   ],
                 );
@@ -262,10 +267,8 @@ class _DataPokokState extends State<DataPokok> {
               if (value == 0) {
                 _scaffoldKey.currentState.openEndDrawer();
               } else if (value == 2) {
-                showSearch(
-                    context: context,
-                    delegate:
-                        CustomSearchDelegateKategori(widget.cachedata, '1'));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (c) => SearchData(kategori: "1")));
               }
             },
           ),
@@ -274,7 +277,7 @@ class _DataPokokState extends State<DataPokok> {
     );
   }
 
-//
+  //
   fetch(String id_kategori, String limit, String tahun, String sumber_data,
       int semester) async {
     final response = await http.get(
@@ -289,26 +292,40 @@ class _DataPokokState extends State<DataPokok> {
             "&semester=" +
             nullReplacer(semester).toString());
     if (response.statusCode == 200) {
-      setState(() {
-        _listData.addAll(json.decode(response.body));
-        _isLoading = false;
-      });
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            _listData.addAll(json.decode(response.body));
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _dataIsEmpty = true;
+          });
+        }
+      }
     } else {
       throw Exception('failed load data');
     }
   }
 
-//data tahun filter
+  //data tahun filter
   fetchListTahun(String id_kategori) async {
     final response = await http.get(
         "https://web-bappeda.herokuapp.com/api/Datas?id_kategori=" +
             id_kategori +
             "&get_group_parameter=tahun");
     if (response.statusCode == 200) {
-      setState(() {
-        lsttahun.addAll(json.decode(response.body));
-        _isLoading = false;
-      });
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            lsttahun.addAll(json.decode(response.body));
+            _isLoading = false;
+          });
+        }
+      }
     } else {
       throw Exception('failed load data');
     }
@@ -321,15 +338,20 @@ class _DataPokokState extends State<DataPokok> {
             id_kategori +
             "&get_group_parameter=sumber_data");
     if (response.statusCode == 200) {
-      setState(() {
-        lstsumberdata.addAll(json.decode(response.body));
-        if (lstsumberdata[0]['nama_sumber'] == '0') {
-          lstsumberdata.removeAt(0);
-        } else {
-          return '';
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            lstsumberdata.addAll(json.decode(response.body));
+            if (lstsumberdata[0]['nama_sumber'] == '0') {
+              lstsumberdata.removeAt(0);
+            } else {
+              return '';
+            }
+            _isLoading = false;
+          });
         }
-        _isLoading = false;
-      });
+      }
     } else {
       throw Exception('failed load data');
     }

@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'SearchData.dart';
+
 class DataRencanaPembangunanProvinsiNTB extends StatefulWidget {
   DataRencanaPembangunanProvinsiNTB(
       {this.title, this.cachedata, this.listtahun, this.listsumberdata});
@@ -25,6 +27,7 @@ class _DataRencanaPembangunanProvinsiNTBState
   String _sumber_data;
   String _tahun;
   int _semester;
+  bool _dataIsEmpty = false;
   bool _isLoading = true;
   int _pageData = 0;
   var dataCache;
@@ -236,9 +239,13 @@ class _DataRencanaPembangunanProvinsiNTBState
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: [
-                    showdata("33", _listData),
+                    _dataIsEmpty
+                        ? Text("Data Kosong / Belum Di Inputkan")
+                        : showdata("33", _listData),
                     _isLoading
-                        ? Center(child: CircularProgressIndicator())
+                        ? _dataIsEmpty
+                            ? Container()
+                            : Center(child: CircularProgressIndicator())
                         : Container()
                   ],
                 );
@@ -264,10 +271,12 @@ class _DataRencanaPembangunanProvinsiNTBState
               if (value == 0) {
                 _scaffoldKey.currentState.openEndDrawer();
               } else if (value == 2) {
-                showSearch(
-                    context: context,
-                    delegate:
-                        CustomSearchDelegateKategori(widget.cachedata, '33'));
+                // showSearch(
+                //     context: context,
+                //     delegate:
+                //         CustomSearchDelegateKategori(widget.cachedata, '33'));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (c) => SearchData(kategori: '33')));
               }
             },
           ),
@@ -290,10 +299,21 @@ class _DataRencanaPembangunanProvinsiNTBState
             "&semester=" +
             nullReplacer(semester).toString());
     if (response.statusCode == 200) {
-      setState(() {
-        _listData.addAll(json.decode(response.body));
-        _isLoading = false;
-      });
+      if (mounted) {
+        var responseLength = json.decode(response.body).length;
+        if (responseLength != 0) {
+          if (mounted) {
+            setState(() {
+              _listData.addAll(json.decode(response.body));
+              _isLoading = false;
+            });
+          }
+        } else {
+          setState(() {
+            _dataIsEmpty = true;
+          });
+        }
+      }
     } else {
       throw Exception('failed load data');
     }
@@ -306,10 +326,15 @@ class _DataRencanaPembangunanProvinsiNTBState
             id_kategori +
             "&get_group_parameter=tahun");
     if (response.statusCode == 200) {
-      setState(() {
-        lsttahun.addAll(json.decode(response.body));
-        _isLoading = false;
-      });
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            lsttahun.addAll(json.decode(response.body));
+            _isLoading = false;
+          });
+        }
+      }
     } else {
       throw Exception('failed load data');
     }
@@ -322,15 +347,20 @@ class _DataRencanaPembangunanProvinsiNTBState
             id_kategori +
             "&get_group_parameter=sumber_data");
     if (response.statusCode == 200) {
-      setState(() {
-        lstsumberdata.addAll(json.decode(response.body));
-        if (lstsumberdata[0]['nama_sumber'] == '0') {
-          lstsumberdata.removeAt(0);
-        } else {
-          return '';
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            lstsumberdata.addAll(json.decode(response.body));
+            if (lstsumberdata[0]['nama_sumber'] == '0') {
+              lstsumberdata.removeAt(0);
+            } else {
+              return '';
+            }
+            _isLoading = false;
+          });
         }
-        _isLoading = false;
-      });
+      }
     } else {
       throw Exception('failed load data');
     }

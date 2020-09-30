@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'SearchData.dart';
 import 'ShowData.dart';
 
 class DataUrusanWajib extends StatefulWidget {
@@ -27,6 +28,7 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
   int _semester;
   bool _isLoading = true;
   bool _apicall = true;
+  bool _dataIsEmpty = false;
   int _pageData = 0;
   int _kategori = 10;
   var dataCache;
@@ -368,9 +370,13 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
                     children: [
-                      showdata("1", _listData),
+                      _dataIsEmpty
+                          ? Text("Data Kosong / Belum Di Inputkan")
+                          : showdata("1", _listData),
                       _isLoading
-                          ? Center(child: CircularProgressIndicator())
+                          ? _dataIsEmpty
+                              ? Container()
+                              : Center(child: CircularProgressIndicator())
                           : Container()
                     ],
                   );
@@ -403,6 +409,9 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                   //       context: context,
                   //       delegate: CustomSearchDelegateKategori(
                   //           widget.cachedata, kategori));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (c) =>
+                          SearchData(kategori: _kategori.toString())));
                 }
               },
             ),
@@ -426,12 +435,19 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
             "&semester=" +
             nullReplacer(semester).toString());
     if (response.statusCode == 200) {
-      setState(() {
-        _listData.addAll(json.decode(response.body));
-        _isLoading = false;
-      });
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        setState(() {
+          _listData.addAll(json.decode(response.body));
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _dataIsEmpty = true;
+        });
+      }
     } else {
-      _listData = [];
+      throw Exception('failed load data');
     }
   }
 
@@ -442,10 +458,13 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
             id_kategori +
             "&get_group_parameter=tahun");
     if (response.statusCode == 200) {
-      setState(() {
-        lsttahun.addAll(json.decode(response.body));
-        _isLoading = false;
-      });
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        setState(() {
+          lsttahun.addAll(json.decode(response.body));
+          _isLoading = false;
+        });
+      }
     } else {
       throw Exception('failed load data');
     }
@@ -458,15 +477,20 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
             id_kategori +
             "&get_group_parameter=sumber_data");
     if (response.statusCode == 200) {
-      setState(() {
-        lstsumberdata.addAll(json.decode(response.body));
-        if (lstsumberdata[0]['nama_sumber'] == '0') {
-          lstsumberdata.removeAt(0);
-        } else {
-          return '';
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            lstsumberdata.addAll(json.decode(response.body));
+            if (lstsumberdata[0]['nama_sumber'] == '0') {
+              lstsumberdata.removeAt(0);
+            } else {
+              return '';
+            }
+            _isLoading = false;
+          });
         }
-        _isLoading = false;
-      });
+      }
     } else {
       throw Exception('failed load data');
     }

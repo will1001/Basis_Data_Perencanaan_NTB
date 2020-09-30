@@ -63,7 +63,7 @@ Widget showdata(String kategori, List _listData) {
                   ],
                 ),
               ),
-              DataCell(Text(e['nilai'])),
+              DataCell(Text(setFormatNilai(e['nilai']))),
               DataCell(Text(e['satuan'])),
               DataCell(Text(semesterConverter(e['tahun'].substring(0, 4)))),
               DataCell(Text(e['tahun'].substring(0, 4))),

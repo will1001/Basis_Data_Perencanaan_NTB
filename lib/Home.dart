@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'DataPokok.dart';
 import 'DataUrusanPilihan.dart';
 import 'DataUrusanWajib.dart';
-import 'SearchList.dart';
+import 'SearchData.dart';
 
 
 
@@ -196,9 +196,11 @@ class _HomeState extends State<Home> {
                 ),
                 title: Text('Search Data'),
                 onTap: () {
-                  showSearch(
-                    context: context,
-                    delegate: CustomSearchDelegate());
+                  // showSearch(
+                  //   context: context,
+                  //   delegate: CustomSearchDelegate("1"));
+                  Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (c) => SearchData(kategori: '')));
                 },
               ),
             ),
