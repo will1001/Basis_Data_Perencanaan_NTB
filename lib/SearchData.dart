@@ -103,9 +103,13 @@ class _SearchDataState extends State<SearchData> {
     if (query.length > 3) {
       setState(() {
         _isLoading = true;
+        _listData.clear();
       });
       fetch(widget.kategori, myController.text);
-      print(_listData);
+      fetchLabel(myController.text);
+      _listData.toSet().toList();
+      // fetchLabel()
+      // print(_listData);
     }
   }
 
@@ -166,6 +170,7 @@ class _SearchDataState extends State<SearchData> {
               onPressed: () {
                 setState(() {
                   myController.text = "";
+                  _listData.clear();
                 });
               })
         ],
@@ -177,8 +182,8 @@ class _SearchDataState extends State<SearchData> {
                   ? Center(
                       child: Text("Data Tidak Di Temukan"),
                     )
-                  : showdata(widget.kategori, _listData)
-              : showdata(widget.kategori, _listData),
+                  : showdata(widget.kategori, _listData,context)
+              : showdata(widget.kategori, _listData,context),
     );
   }
 
@@ -197,6 +202,50 @@ class _SearchDataState extends State<SearchData> {
           _isLoading = false;
         });
       }
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
+  fetchDataId(String id_kategori, String id_data) async {
+    final response = await http.get(
+        "https://web-bappeda.herokuapp.com/api/Datas?limit=0" +
+            "&id_kategori=" +
+            id_kategori +
+            "&id=" +
+            nullReplacer(id_data));
+    if (response.statusCode == 200) {
+      if (mounted) {
+        setState(() {
+          // _listData.clear();
+          _listData.addAll(json.decode(response.body));
+          _isLoading = false;
+        });
+      }
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
+  fetchLabel(String keyword) async {
+    final response = await http.get(
+        "https://web-bappeda.herokuapp.com/api/Label?limit=0" +
+            "&limit=0&cari=" +
+            nullReplacer(keyword));
+    if (response.statusCode == 200) {
+      // if (mounted) {
+      //   setState(() {
+      //     _listData.clear();
+      //     _listData.addAll(json.decode(response.body));
+      //     _isLoading = false;
+      //   });
+      // }
+      List temp = new List();
+      temp.addAll(json.decode(response.body));
+      for (var i = 0; i < temp.length; i++) {
+        fetchDataId(widget.kategori, temp[i]['id_data']);
+      }
+      // temp.map((e) => print(e['nama']));
     } else {
       throw Exception('failed load data');
     }

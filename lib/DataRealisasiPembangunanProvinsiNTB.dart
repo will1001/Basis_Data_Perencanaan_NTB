@@ -241,7 +241,7 @@ class _DataRealisasiPembangunanProvinsiNTBState
                   children: [
                     _dataIsEmpty
                         ? Text("Data Kosong / Belum Di Inputkan")
-                        : showdata("32", _listData),
+                        : showdata("32", _listData,context),
                     _isLoading
                         ? _dataIsEmpty
                             ? Container()

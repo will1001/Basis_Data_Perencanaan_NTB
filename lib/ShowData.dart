@@ -4,11 +4,14 @@ import 'package:http/http.dart' as http;
 // import 'dart:async';
 // import 'model/APIProvider.dart';
 // import 'model/APISource.dart';
+import 'ChartData.dart';
+import 'ViewChart.dart';
 import 'model/ApiKeterangan.dart';
 
-Widget showdata(String kategori, List _listData) {
+Widget showdata(String kategori, List _listData,var context) {
   int nmr = 0;
   var HeadTable = [
+    "Grafik",
     "No",
     "Keterangan",
     "Nilai",
@@ -37,6 +40,10 @@ Widget showdata(String kategori, List _listData) {
           nmr++;
           return DataRow(
             cells: <DataCell>[
+              DataCell(IconButton(icon: Icon(Icons.insert_chart), onPressed: (){
+                Navigator.of(context)
+              .push(MaterialPageRoute(builder: (c) => ViewChart(kategori,e['nama_data'],e['id'])));
+              })),
               DataCell(Text(nmr.toString())),
               DataCell(
                 Wrap(
@@ -286,4 +293,6 @@ String setFormatNilai(String nilai) {
   }
   return newnilai.reversed.join();
 }
+
+
 // }

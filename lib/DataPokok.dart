@@ -237,7 +237,7 @@ class _DataPokokState extends State<DataPokok> {
                   children: [
                     _dataIsEmpty
                         ? Text("Data Kosong / Belum Di Inputkan")
-                        : showdata("1", _listData),
+                        : showdata("1", _listData,context),
                     _isLoading
                         ? _dataIsEmpty
                             ? Container()

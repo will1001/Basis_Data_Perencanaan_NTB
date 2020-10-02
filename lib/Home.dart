@@ -7,10 +7,7 @@ import 'DataPokok.dart';
 import 'DataUrusanPilihan.dart';
 import 'DataUrusanWajib.dart';
 import 'SearchData.dart';
-
-
-
-
+import 'ViewChart.dart';
 
 class Home extends StatefulWidget {
   Home({this.title});
@@ -23,8 +20,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-   
   }
+
   var lsttahun;
   var lstsumberdata;
   @override
@@ -41,27 +38,26 @@ class _HomeState extends State<Home> {
       body: Center(
           child: ListView(
         children: <Widget>[
-        //  FutureBuilder<List<Data>>(
-        //     future:
-        //        ,
-        //     builder: (context, snapshot) {
-        //       if (snapshot.hasData) {
-        //         lsttahun = snapshot.data
-        //             .map((d) => d.tahun.toString().substring(0, 4))
-        //             .toSet()
-        //             .toList();
-        //         lsttahun.add(DateTime.now().toString().substring(0, 4));
-        //         lsttahun = lsttahun.toSet().toList();
-        //         lstsumberdata = snapshot.data
-        //             .map((d) => d.sumberdata.toString())
-        //             .toSet()
-        //             .toList();
+          //  FutureBuilder<List<Data>>(
+          //     future:
+          //        ,
+          //     builder: (context, snapshot) {
+          //       if (snapshot.hasData) {
+          //         lsttahun = snapshot.data
+          //             .map((d) => d.tahun.toString().substring(0, 4))
+          //             .toSet()
+          //             .toList();
+          //         lsttahun.add(DateTime.now().toString().substring(0, 4));
+          //         lsttahun = lsttahun.toSet().toList();
+          //         lstsumberdata = snapshot.data
+          //             .map((d) => d.sumberdata.toString())
+          //             .toSet()
+          //             .toList();
 
-
-        //       }
-        //       return Container();
-        //     },
-        //   ),
+          //       }
+          //       return Container();
+          //     },
+          //   ),
           Container(
             margin: EdgeInsets.only(top: 8.0),
             decoration: BoxDecoration(
@@ -150,13 +146,13 @@ class _HomeState extends State<Home> {
                 ),
                 title: Text('Data Realisasi Pembangunan Provinsi NTB'),
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (c) => DataRealisasiPembangunanProvinsiNTB()));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (c) => DataRealisasiPembangunanProvinsiNTB()));
                 },
               ),
             ),
           ),
-         Container(
+          Container(
             decoration: BoxDecoration(
                 border: Border(
               left: BorderSide(color: Colors.blue, width: 1.0),
@@ -173,13 +169,13 @@ class _HomeState extends State<Home> {
                 ),
                 title: Text('Data Rencana Pembangunan Provinsi NTB'),
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (c) => DataRencanaPembangunanProvinsiNTB()));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (c) => DataRencanaPembangunanProvinsiNTB()));
                 },
               ),
             ),
           ),
-         Container(
+          Container(
             decoration: BoxDecoration(
                 border: Border(
               left: BorderSide(color: Colors.blue, width: 1.0),
@@ -199,13 +195,13 @@ class _HomeState extends State<Home> {
                   // showSearch(
                   //   context: context,
                   //   delegate: CustomSearchDelegate("1"));
-                  Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (c) => SearchData(kategori: '')));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (c) => SearchData(kategori: '')));
                 },
               ),
             ),
           ),
-         Container(
+          Container(
             decoration: BoxDecoration(
                 border: Border(
               left: BorderSide(color: Colors.blue, width: 1.0),
@@ -222,8 +218,8 @@ class _HomeState extends State<Home> {
                 ),
                 title: Text('Kontak'),
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (c) => Kontak()));
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (c) => Kontak()));
                 },
               ),
             ),

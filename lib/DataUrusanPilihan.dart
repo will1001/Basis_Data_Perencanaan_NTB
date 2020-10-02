@@ -347,7 +347,7 @@ class _DataUrusanPilihanState extends State<DataUrusanPilihan>
               children: [
                 _dataIsEmpty
                     ? Text("Data Kosong / Belum Di Inputkan")
-                    : showdata("1", _listData),
+                    : showdata(_kategori.toString(), _listData,context),
                 _isLoading
                     ? _dataIsEmpty
                         ? Container()
