@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'SearchData.dart';
 import 'ShowData.dart';
 
@@ -25,49 +26,31 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _sumber_data;
   String _tahun;
+  String _tahun_file;
+  String _tahun_terbaru;
+  String _fileName;
   int _semester;
   bool _isLoading = true;
+  bool _isLoadingFile = true;
   bool _apicall = true;
   bool _dataIsEmpty = false;
+  bool _fileIsEmpty = false;
   int _pageData = 0;
   int _kategori = 10;
   var dataCache;
   List _listData = new List();
+  List _listDataFile = new List();
   List lstsumberdata = new List();
   List lsttahun = new List();
+  List lsttahunFile = new List();
   ScrollController _scrollController = new ScrollController();
-  // TabController _tabController;
-  // final List<Tab> myTabs = <Tab>[
-  //   Tab(child: Text('1. Pendidikan')),
-  //   Tab(child: Text('2. Kesehatan')),
-  //   Tab(child: Text('3. Pekerjaan Umum dan Penataan Ruang')),
-  //   Tab(child: Text('4. Perumahan dan Kawasan Permukiman')),
-  //   Tab(child: Text('5. Keamanan dan Ketertiban Umum')),
-  //   Tab(child: Text('6. Sosial')),
-  //   Tab(child: Text('7. Tenaga Kerja')),
-  //   Tab(child: Text('8. Pemberdayaan Perempuan dan Perlindungan Anak')),
-  //   Tab(child: Text('9. Pangan')),
-  //   Tab(child: Text('10. Pertanahan')),
-  //   Tab(child: Text('11. Lingkungan Hidup')),
-  //   Tab(child: Text('12. Administrasi Kependudukan dan Pencatatan Sipil')),
-  //   Tab(child: Text('13. Pemberdayaan Masyarakat Desa')),
-  //   Tab(child: Text('14. Pengendalian Penduduk dan Keluarga Berencana')),
-  //   Tab(child: Text('15. Perhubungan')),
-  //   Tab(child: Text('16. Komunikasi dan Informatika')),
-  //   Tab(child: Text('17. Koperasi Usaha Kecil dan Menengah')),
-  //   Tab(child: Text('18. Penanaman Modal')),
-  //   Tab(child: Text('19. Kepemudaan dan Olahraga')),
-  //   Tab(child: Text('20. Kebudayaan')),
-  //   Tab(child: Text('21. Perpustakaan')),
-  //   Tab(child: Text('22. Kearsipan')),
-  // ];
 
   var listmenu;
 
   @override
   void initState() {
     super.initState();
-    // _tabController = new TabController(vsync: this, length: myTabs.length);
+
     listmenu = [
       {'index': 0, 'data': 'Pendidikan'},
       {'index': 1, 'data': 'Kesehatan'},
@@ -94,6 +77,9 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
     ];
     if (_apicall) {
       fetch(_kategori.toString(), 0.toString(), null, null, null);
+      fetchKategori(_kategori.toString());
+      fetchfile(_kategori.toString(), "");
+      fetchListTahunFile(_kategori.toString());
       fetchListTahun(_kategori.toString());
       fetchListSumberData(_kategori.toString());
       _apicall = false;
@@ -133,11 +119,22 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                     height: 100,
                     child: DrawerHeader(
                       child: Center(
-                          child: Text('Menu',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 23.0))),
+                          child: SizedBox(
+                        width: 204.0,
+                        height: 352.0,
+                        child: FadeInImage(
+                          fadeInDuration: const Duration(seconds: 1),
+                          placeholder: AssetImage(
+                              'assets/images/Bappeda-Logo-300x95.png'),
+                          image: AssetImage(
+                              'assets/images/Bappeda-Logo-300x95.png'),
+                        ),
+                      )),
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        border: Border(
+                          bottom: BorderSide(width: 3.0, color: Colors.blue),
+                        ),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -154,15 +151,22 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                                     _listData.clear();
                                     lstsumberdata.clear();
                                     lsttahun.clear();
+                                    lsttahunFile.clear();
                                     _tahun = null;
+                                    _tahun_terbaru = null;
                                     _sumber_data = null;
                                     _semester = null;
                                     _kategori = f['index'] + 10;
                                     _apicall = true;
                                     _isLoading = true;
+                                    _dataIsEmpty = false;
+                                    _fileIsEmpty = false;
                                   });
 
                                   fetchListTahun(_kategori.toString());
+                                  fetchListTahunFile(_kategori.toString());
+                                  fetchKategori(_kategori.toString());
+                                  fetchfile(_kategori.toString(),"");
                                   fetchListSumberData(_kategori.toString());
                                   fetch(_kategori.toString(), 0.toString(),
                                       null, null, null);
@@ -189,11 +193,22 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                     height: 100.0,
                     child: DrawerHeader(
                       child: Center(
-                          child: Text('Filter Data',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 23.0))),
+                          child: SizedBox(
+                        width: 204.0,
+                        height: 352.0,
+                        child: FadeInImage(
+                          fadeInDuration: const Duration(seconds: 1),
+                          placeholder: AssetImage(
+                              'assets/images/Bappeda-Logo-300x95.png'),
+                          image: AssetImage(
+                              'assets/images/Bappeda-Logo-300x95.png'),
+                        ),
+                      )),
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        border: Border(
+                          bottom: BorderSide(width: 3.0, color: Colors.blue),
+                        ),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -205,7 +220,7 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                       ),
                       DropdownButton<String>(
                         value: _tahun,
-                        icon: Icon(Icons.arrow_downward),
+                        icon: Icon(Icons.keyboard_arrow_down),
                         iconSize: 24,
                         elevation: 16,
                         style: TextStyle(color: Colors.black),
@@ -239,10 +254,11 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                     child: DropdownButton<String>(
                       isExpanded: true,
                       value: _sumber_data,
-                      icon: Icon(Icons.arrow_downward),
+                      icon: Icon(Icons.keyboard_arrow_down),
                       iconSize: 24,
                       elevation: 16,
                       style: TextStyle(color: Colors.black),
+                      itemHeight: 80,
                       underline: Container(
                         height: 2,
                         color: Colors.black,
@@ -342,18 +358,27 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
               ),
             ),
             appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.white,
+              elevation: 0,
+              toolbarHeight: 50,
+              iconTheme: IconThemeData(
+                color: Colors.black, //change your color here
+              ),
               actions: <Widget>[
                 Opacity(
                   opacity: 0,
                 )
               ],
-              leading: Opacity(
-                opacity: 0,
-              ),
+              leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
               centerTitle: true,
               title: Text(
-                'Data Urusan Wajib',
-                style: TextStyle(fontSize: 16.0),
+                listmenu[_kategori - 10]['data'],
+                style: TextStyle(fontSize: 16.0, color: Colors.black),
               ),
               // bottom: PreferredSize(
               //     child: TabBar(
@@ -372,7 +397,7 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                     children: [
                       _dataIsEmpty
                           ? Text("Data Kosong / Belum Di Inputkan")
-                          : showdata(_kategori.toString(), _listData,context),
+                          : showdata(_kategori.toString(), _listData, context),
                       _isLoading
                           ? _dataIsEmpty
                               ? Container()
@@ -415,6 +440,22 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
                 }
               },
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                // Add your onPressed code here!
+
+                if (_isLoadingFile && !_fileIsEmpty) {
+                  print("please wait");
+                } else {
+                  fileCheckPopup();
+                }
+              },
+              child: Text(
+                "PDF",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Colors.red[400],
+            ),
           ),
         ),
       ),
@@ -424,7 +465,7 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
   fetch(String id_kategori, String limit, String tahun, String sumber_data,
       int semester) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Datas?limit=" +
+        "https://bappeda-web.herokuapp.com/api/Datas?limit=" +
             limit +
             "&id_kategori=" +
             id_kategori +
@@ -451,10 +492,90 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
     }
   }
 
+  fetchListTahunFile(String id_kategori) async {
+    final response = await http.get(
+        "https://bappeda-web.herokuapp.com/api/file?kategori=" +
+            id_kategori +
+            "&get_list_tahun=tahun");
+    if (response.statusCode == 200) {
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            lsttahunFile.addAll(json.decode(response.body));
+            _isLoadingFile = false;
+          });
+        }
+      }else {
+        setState(() {
+          _fileIsEmpty = true;
+        });
+      }
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
+  fetchfile(String id_kategori, String tahun) async {
+    String url;
+
+    if (tahun == '') {
+      url =
+          "https://bappeda-web.herokuapp.com/api/file?kategori=" + id_kategori;
+    } else {
+      url = "https://bappeda-web.herokuapp.com/api/file?kategori=" +
+          id_kategori +
+          "&tahun=" +
+          tahun;
+    }
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      var responseLength = json.decode(response.body).length;
+      print(json.decode(response.body));
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            if (tahun == '') {
+              _tahun_terbaru = json.decode(response.body)[0]['tahun'];
+            } else {
+              _listDataFile.addAll(json.decode(response.body));
+            }
+          });
+        }
+      }
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
+  fetchKategori(String id_kategori) async {
+    final response = await http.get(
+        "https://bappeda-web.herokuapp.com/api/kategori?id=" +
+            id_kategori +
+            "&limit=0");
+    if (response.statusCode == 200) {
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            // _fileName = json.decode(response.body)['nama'];
+            // print(json.decode(response.body)[0]['nama']);
+            _fileName = json
+                .decode(response.body)[0]['nama']
+                .toString()
+                .replaceAll(' ', '_');
+          });
+        }
+      }
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
 //data tahun filter
   fetchListTahun(String id_kategori) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Datas?id_kategori=" +
+        "https://bappeda-web.herokuapp.com/api/Datas?id_kategori=" +
             id_kategori +
             "&get_group_parameter=tahun");
     if (response.statusCode == 200) {
@@ -473,7 +594,7 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
   // data sumber_data filter
   fetchListSumberData(String id_kategori) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Datas?id_kategori=" +
+        "https://bappeda-web.herokuapp.com/api/Datas?id_kategori=" +
             id_kategori +
             "&get_group_parameter=sumber_data");
     if (response.statusCode == 200) {
@@ -499,5 +620,83 @@ class _DataUrusanWajibState extends State<DataUrusanWajib>
   nullReplacer(var val) {
     val = val == null ? '' : val;
     return val;
+  }
+
+  fileCheckPopup() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Pilih Tahun"),
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return SizedBox(
+                height: 70,
+                child: Column(
+                  children: [
+                    DropdownButton<String>(
+                      value: _tahun_file,
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      iconSize: 24,
+                      elevation: 16,
+                      hint: Text("Tahun"),
+                      isExpanded: true,
+                      style: TextStyle(color: Colors.black),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.black,
+                      ),
+                      onChanged: (String newValue) {
+                        setState(() {
+                          _tahun_file = newValue;
+                        });
+                      },
+                      items: (lsttahunFile == null ? [''] : lsttahunFile)
+                          .map<DropdownMenuItem<String>>((dynamic value) {
+                        return DropdownMenuItem<String>(
+                          value: value['tahun'],
+                          child: Text(value['tahun']),
+                        );
+                      }).toList(),
+                    ),
+                    Center(
+                      child: _fileIsEmpty
+                          ? Text(
+                              "PDF File Tidak Tersedia",
+                              style: TextStyle(color: Colors.red),
+                            )
+                          : Container(),
+                    )
+                  ],
+                ),
+              );
+            }),
+            actions: [
+              FlatButton(
+                child: Text("close"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              _fileIsEmpty?Container():FlatButton(
+                child: Text("ok"),
+                onPressed: () async {
+                  if (_tahun_file == null) {
+                    Navigator.pop(context);
+                  } else {
+                    String url =
+                        'https://bappeda-web.herokuapp.com/upload/${_fileName}_${_tahun_file}.pdf';
+
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  }
+                },
+              ),
+            ],
+          );
+        });
   }
 }

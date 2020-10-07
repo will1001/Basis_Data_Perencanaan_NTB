@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'SearchData.dart';
 
@@ -26,14 +27,21 @@ class _DataRencanaPembangunanProvinsiNTBState
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _sumber_data;
   String _tahun;
+  String _tahun_terbaru;
+String _fileName;
+  String _tahun_file;
   int _semester;
   bool _dataIsEmpty = false;
+  bool _fileIsEmpty = false;
   bool _isLoading = true;
+  bool _isLoadingFile = true;
   int _pageData = 0;
   var dataCache;
   List _listData = new List();
+  List _listDataFile = new List();
   List lstsumberdata = new List();
   List lsttahun = new List();
+  List lsttahunFile = new List();
   ScrollController _scrollController = new ScrollController();
 
   @override
@@ -69,11 +77,22 @@ class _DataRencanaPembangunanProvinsiNTBState
                   height: 100.0,
                   child: DrawerHeader(
                     child: Center(
-                        child: Text('Filter Data',
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 23.0))),
+                        child: SizedBox(
+                      width: 204.0,
+                      height: 352.0,
+                      child: FadeInImage(
+                        fadeInDuration: const Duration(seconds: 1),
+                        placeholder:
+                            AssetImage('assets/images/Bappeda-Logo-300x95.png'),
+                        image:
+                            AssetImage('assets/images/Bappeda-Logo-300x95.png'),
+                      ),
+                    )),
                     decoration: BoxDecoration(
-                      color: Colors.blue,
+                      border: Border(
+                        bottom: BorderSide(width: 3.0, color: Colors.blue),
+                      ),
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -85,7 +104,7 @@ class _DataRencanaPembangunanProvinsiNTBState
                     ),
                     DropdownButton<String>(
                       value: _tahun,
-                      icon: Icon(Icons.arrow_downward),
+                      icon: Icon(Icons.keyboard_arrow_down),
                       iconSize: 24,
                       elevation: 16,
                       style: TextStyle(color: Colors.black),
@@ -119,10 +138,11 @@ class _DataRencanaPembangunanProvinsiNTBState
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: _sumber_data,
-                    icon: Icon(Icons.arrow_downward),
+                    icon: Icon(Icons.keyboard_arrow_down),
                     iconSize: 24,
                     elevation: 16,
                     style: TextStyle(color: Colors.black),
+                    itemHeight: 80,
                     underline: Container(
                       height: 2,
                       color: Colors.black,
@@ -222,6 +242,13 @@ class _DataRencanaPembangunanProvinsiNTBState
             ),
           ),
           appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.white,
+            elevation: 0,
+            toolbarHeight: 50,
+            iconTheme: IconThemeData(
+              color: Colors.black, //change your color here
+            ),
             actions: <Widget>[
               Opacity(
                 opacity: 0,
@@ -230,7 +257,7 @@ class _DataRencanaPembangunanProvinsiNTBState
             centerTitle: true,
             title: Text(
               'Data Rencana Pembangunan',
-              style: TextStyle(fontSize: 16.0),
+              style: TextStyle(fontSize: 16.0,color: Colors.black),
             ),
           ),
           body: ListView.builder(
@@ -241,7 +268,7 @@ class _DataRencanaPembangunanProvinsiNTBState
                   children: [
                     _dataIsEmpty
                         ? Text("Data Kosong / Belum Di Inputkan")
-                        : showdata("33", _listData,context),
+                        : showdata("33", _listData, context),
                     _isLoading
                         ? _dataIsEmpty
                             ? Container()
@@ -280,6 +307,23 @@ class _DataRencanaPembangunanProvinsiNTBState
               }
             },
           ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              // Add your onPressed code here!
+
+              if (_isLoadingFile) {
+                print("please wait");
+              } else {
+                fileCheckPopup();
+              }
+
+            },
+            child: Text(
+              "PDF",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Colors.red[400],
+          ),
         ),
       ),
     );
@@ -288,7 +332,7 @@ class _DataRencanaPembangunanProvinsiNTBState
   fetch(String id_kategori, String limit, String tahun, String sumber_data,
       int semester) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Datas?limit=" +
+        "https://bappeda-web.herokuapp.com/api/Datas?limit=" +
             limit +
             "&id_kategori=" +
             id_kategori +
@@ -319,10 +363,66 @@ class _DataRencanaPembangunanProvinsiNTBState
     }
   }
 
+  fetchListTahunFile(String id_kategori) async {
+    final response = await http.get(
+        "https://bappeda-web.herokuapp.com/api/file?kategori=" +
+            id_kategori +
+            "&get_list_tahun=tahun");
+    if (response.statusCode == 200) {
+      var responseLength = json.decode(response.body).length;
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            lsttahunFile.addAll(json.decode(response.body));
+            _isLoadingFile = false;
+          });
+        }
+      }else {
+        setState(() {
+          _fileIsEmpty = true;
+        });
+      }
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
+  fetchfile(String id_kategori, String tahun) async {
+    String url;
+
+    if (tahun == '') {
+      url =
+          "https://bappeda-web.herokuapp.com/api/file?kategori=" + id_kategori;
+    } else {
+      url = "https://bappeda-web.herokuapp.com/api/file?kategori=" +
+          id_kategori +
+          "&tahun=" +
+          tahun;
+    }
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      var responseLength = json.decode(response.body).length;
+      print(json.decode(response.body));
+      if (responseLength != 0) {
+        if (mounted) {
+          setState(() {
+            if (tahun == '') {
+              _tahun_terbaru = json.decode(response.body)[0]['tahun'];
+            } else {
+              _listDataFile.addAll(json.decode(response.body));
+            }
+          });
+        }
+      }
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
 //data tahun filter
   fetchListTahun(String id_kategori) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Datas?id_kategori=" +
+        "https://bappeda-web.herokuapp.com/api/Datas?id_kategori=" +
             id_kategori +
             "&get_group_parameter=tahun");
     if (response.statusCode == 200) {
@@ -343,7 +443,7 @@ class _DataRencanaPembangunanProvinsiNTBState
   // data sumber_data filter
   fetchListSumberData(String id_kategori) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Datas?id_kategori=" +
+        "https://bappeda-web.herokuapp.com/api/Datas?id_kategori=" +
             id_kategori +
             "&get_group_parameter=sumber_data");
     if (response.statusCode == 200) {
@@ -369,5 +469,83 @@ class _DataRencanaPembangunanProvinsiNTBState
   nullReplacer(var val) {
     val = val == null ? '' : val;
     return val;
+  }
+
+  fileCheckPopup() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Pilih Tahun"),
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return SizedBox(
+                height: 70,
+                child: Column(
+                  children: [
+                    DropdownButton<String>(
+                      value: _tahun_file,
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      iconSize: 24,
+                      elevation: 16,
+                      hint: Text("Tahun"),
+                      isExpanded: true,
+                      style: TextStyle(color: Colors.black),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.black,
+                      ),
+                      onChanged: (String newValue) {
+                        setState(() {
+                          _tahun_file = newValue;
+                        });
+                      },
+                      items: (lsttahunFile == null ? [''] : lsttahunFile)
+                          .map<DropdownMenuItem<String>>((dynamic value) {
+                        return DropdownMenuItem<String>(
+                          value: value['tahun'],
+                          child: Text(value['tahun']),
+                        );
+                      }).toList(),
+                    ),
+                    Center(
+                      child: lsttahunFile.length == 0
+                          ? Text(
+                              "PDF File Tidak Tersedia",
+                              style: TextStyle(color: Colors.red),
+                            )
+                          : Container(),
+                    )
+                  ],
+                ),
+              );
+            }),
+            actions: [
+              FlatButton(
+                child: Text("close"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              _fileIsEmpty?Container():FlatButton(
+                child: Text("ok"),
+                onPressed: () async {
+                  if (_tahun_file == null) {
+                    Navigator.pop(context);
+                  } else {
+                    String url =
+                        'https://bappeda-web.herokuapp.com/upload/${_fileName}_${_tahun_file}.pdf';
+
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  }
+                },
+              ),
+            ],
+          );
+        });
   }
 }

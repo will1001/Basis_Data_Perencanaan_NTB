@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 Future<List<BeritaAPI>> fetchBeritaAPI(String dataLimit) async {
   var responseJson;
-  String url = "https://web-bappeda.herokuapp.com/api/Datas?limit=" + dataLimit;
+  String url = "https://bappeda-web.herokuapp.com/api/Datas?limit=" + dataLimit;
   final response = await http.get(url);
   if (response.statusCode == 200) {
     responseJson = json.decode(response.body);

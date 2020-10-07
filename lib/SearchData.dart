@@ -54,7 +54,7 @@ import 'dart:convert';
 
 //   fetch(String id_kategori, String keyword) async {
 //     final response = await http.get(
-//         "https://web-bappeda.herokuapp.com/api/Datas?limit=0" +
+//         "https://bappeda-web.herokuapp.com/api/Datas?limit=0" +
 //             "&id_kategori=" +
 //             id_kategori +
 //             "&cari=" +
@@ -189,7 +189,7 @@ class _SearchDataState extends State<SearchData> {
 
   fetch(String id_kategori, String keyword) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Datas?limit=0" +
+        "https://bappeda-web.herokuapp.com/api/Datas?limit=0" +
             "&id_kategori=" +
             id_kategori +
             "&cari=" +
@@ -209,7 +209,7 @@ class _SearchDataState extends State<SearchData> {
 
   fetchDataId(String id_kategori, String id_data) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Datas?limit=0" +
+        "https://bappeda-web.herokuapp.com/api/Datas?limit=0" +
             "&id_kategori=" +
             id_kategori +
             "&id=" +
@@ -229,7 +229,7 @@ class _SearchDataState extends State<SearchData> {
 
   fetchLabel(String keyword) async {
     final response = await http.get(
-        "https://web-bappeda.herokuapp.com/api/Label?limit=0" +
+        "https://bappeda-web.herokuapp.com/api/Label?limit=0" +
             "&limit=0&cari=" +
             nullReplacer(keyword));
     if (response.statusCode == 200) {

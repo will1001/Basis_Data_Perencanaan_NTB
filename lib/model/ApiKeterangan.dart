@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 Future<List<KeteranganAPI>> fetchKeterangan(String id) async {
   var responseJson;
-  String url = "https://web-bappeda.herokuapp.com/api/Keterangan?id_data=" + id;
+  String url = "https://bappeda-web.herokuapp.com/api/Keterangan?id_data=" + id;
   final response = await http.get(url);
   if (response.statusCode == 200) {
     responseJson = json.decode(response.body);

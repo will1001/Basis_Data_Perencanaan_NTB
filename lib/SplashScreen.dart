@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // setState(() {
-    //   _cachedata = "demo('https://web-bappeda.herokuapp.com/api/label')";
+    //   _cachedata = "demo('https://bappeda-web.herokuapp.com/api/label')";
     // });
     Future.delayed(
       Duration(seconds: 5),
